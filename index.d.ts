@@ -1,4 +1,4 @@
-declare module "react-native-wechat2" {
+declare module "react-native-wechat" {
   export function registerApp(appId: string): Promise<boolean>;
   export function registerAppWithDescription(
     appId: string,

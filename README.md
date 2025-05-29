@@ -1,6 +1,6 @@
 <img height="200" src="./weixin.png?raw=true">
 
-# React-Native-Wechat2
+# React-Native-Wechat
 > upgrade WeChat SDK base on [React-Native-Wechat](https://github.com/yorkie/react-native-wechat)
 
 ## Before Started

@@ -20,12 +20,12 @@ Pod::Spec.new do |s|
                   React-Native(iOS/Android) functionalities include WeChat Login, Share
                    DESC
 
-  s.homepage     = "https://github.com/Mart1nch/react-native-wechat2"
+  s.homepage     = "https://github.com/Mart1nch/react-native-wechat"
   s.license      = "MIT"
   # s.license      = { :type => "MIT", :file => "FILE_LICENSE" }
   s.author             = { "Mart1nch" => "martin4public@gmain.com" }
   s.platform     = :ios, "7.0"
-  s.source       = { :git => "https://github.com/Mart1nch/react-native-wechat2.git", :tag => "master" }
+  s.source       = { :git => "https://github.com/Mart1nch/react-native-wechat.git", :tag => "master" }
   s.source_files  = "**/*.{h,m}"
   s.requires_arc = true
 
