@@ -1,17 +1,33 @@
 <img height="200" src="./weixin.png?raw=true">
 
-# React-Native-Wechat
+# React-Native-Wechat2
+> upgrade WeChat SDK base on [React-Native-Wechat](https://github.com/yorkie/react-native-wechat)
+
+## Before Started
+
+Both this library and React-Native-Wechat mentioned above <strong>usually</strong> need add original code, like overriding UIApplication methods to deal with open url and universal link events. links below show the details
+
+1. [wechat sdk access guide](https://developers.weixin.qq.com/doc/oplatform/Mobile_App/Access_Guide/iOS.html)
+2. [React-Native-Wechat lib start guide on ios](https://github.com/yorkie/react-native-wechat/blob/master/docs/build-setup-ios.md)
+
+## DONE
+
+- upgrade wechat sdk to 2.0.4 in ios
+
+## TODO
+
+- upgrade wechat sdk in android,
 
 [React Native] bridging library that integrates WeChat SDKs:
 
-- [x] iOS SDK 1.7.2
+- [x] iOS SDK 2.0.4
 - [x] Android SDK 221
 
 [react-native-wechat] has the following tracking data in the open source world:
 
-| NPM | Dependency | Downloads | Build |
+<!-- | NPM | Dependency | Downloads | Build |
 |-----|------------|-----------|-------|
-| [![NPM version][npm-image]][npm-url] | [![Dependency Status][david-image]][david-url] | [![Downloads][downloads-image]][downloads-url] | [![Build Status][travis-image]][travis-url] |
+| [![NPM version][npm-image]][npm-url] | [![Dependency Status][david-image]][david-url] | [![Downloads][downloads-image]][downloads-url] | [![Build Status][travis-image]][travis-url] | -->
 
 ## Table of Contents
 
@@ -32,9 +48,10 @@
 [react-native-wechat] uses Promises, therefore you can use `Promise`
 or `async/await` to manage your dataflow.
 
-#### registerApp(appid)
+#### registerAppWithUniversalLink(appid, universalLink)
 
 - `appid` {String} the appid you get from WeChat dashboard
+- `universalLink` {String} the universal link you set on developers.weixin.qq.com
 - returns {Boolean} explains if your application is registered done
 
 This method should be called once globally.
@@ -42,16 +59,8 @@ This method should be called once globally.
 ```js
 import * as WeChat from 'react-native-wechat';
 
-WeChat.registerApp('appid');
+WeChat.registerAppWithUniversalLink('appid', 'https://xx.xx.xx/');
 ```
-
-#### registerAppWithDescription(appid, description)
-
-- `appid` {String} the appid you get from WeChat dashboard
-- `description` {String} the description of your app
-- returns {Boolean} explains if your application is registered done
-
-This method is only available on iOS.
 
 #### isWXAppInstalled() 
 
@@ -311,38 +320,6 @@ Sends request for proceeding payment, then returns an object:
 ```sh
 $ npm install react-native-wechat --save
 ```
-## Partners
-
-[React Native Starter Kit](https://reactnativestarter.com/) - is a mobile starter kit that allows your team to fully focus on development of the features that set your product apart from the competitors instead of building your app from scratch.
-
-## Community
-
-#### IRC
-
-<a href="http://qm.qq.com/cgi-bin/qm/qr?k=cg3irEFCGxjkm2YJCt5V9OeJA1pNo5Ui"><img width="200" src="./qrcode_qq.jpg"></a>
-
-#### Tutorials
-
-- [react-native-wechat微信组件的使用](http://www.jianshu.com/p/3f424cccb888)
-- [超详细React Native实现微信好友/朋友圈分享功能-Android/iOS双平台通用](http://www.jianshu.com/p/ce5439dd1f52)
-- [柳轩涤俗 - 微信登录](http://www.cnblogs.com/zhangdw/p/6194345.html)
-
-#### Who's using it
-
-<a href="https://github.com/attentiveness/reading"><img height="80" width="80" src="https://raw.githubusercontent.com/attentiveness/reading/master/Reading_Logo.png"></a>
-<a href="https://github.com/lipeiwei-szu/ReactNativeOne"><img height="80" width="80" src="http://android-artworks.25pp.com/fs08/2017/05/22/3/110_ed42e5c8f701ae26be6b0c423cb51858_con_130x130.png"></a>
-
-## Authors
-
-| GitHub        | Role       | Email                 |
-|---------------|------------|-----------------------|
-| [@yorkie]     | Author     | yorkiefixer@gmail.com |
-| [@xing-zheng] | Emeriti    |                       |
-| [@tdzl2003]   | Emeriti    | tdzl2003@gmail.com    |
-
-[@yorkie]: https://github.com/yorkie
-[@xing-zheng]: https://github.com/xing-zheng
-[@tdzl2003]: https://github.com/tdzl2003
 
 ## License
 

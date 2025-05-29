@@ -106,6 +106,16 @@ export const registerAppWithDescription = wrapRegisterApp(
 );
 
 /**
+ * @method registerAppWithUniversalLink
+ * @param {String} appid - the app id
+ * @param {String} universalLink - the app description
+ * @return {Promise}
+ */
+export const registerAppWithUniversalLink = wrapRegisterApp(
+  WeChat.registerAppWithUniversalLink,
+);
+
+/**
  * Return if the wechat app is installed in the device.
  * @method isWXAppInstalled
  * @return {Promise}

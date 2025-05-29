@@ -16,6 +16,7 @@
 // Define error messages
 #define NOT_REGISTERED (@"registerApp required.")
 #define INVOKE_FAILED (@"WeChat API invoke returns false.")
+#define INVOKE_SUCCEED (@"WeChat API invoke returns succeed.")
 
 @implementation RCTWeChat
 
@@ -39,15 +40,25 @@ RCT_EXPORT_MODULE()
 
 - (BOOL)handleOpenURL:(NSNotification *)aNotification
 {
-    NSString * aURLString =  [aNotification userInfo][@"url"];
-    NSURL * aURL = [NSURL URLWithString:aURLString];
+   NSString * aURLString =  [aNotification userInfo][@"url"];
+   NSURL * aURL = [NSURL URLWithString:aURLString];
 
-    if ([WXApi handleOpenURL:aURL delegate:self])
-    {
-        return YES;
-    } else {
-        return NO;
-    }
+
+   if ([WXApi handleOpenURL:aURL delegate:self])
+   {
+       return YES;
+   } else {
+       return NO;
+   }
+}
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    return  [WXApi handleOpenURL:url delegate:self];
+}
+
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    return [WXApi handleOpenURL:url delegate:self];
 }
 
 - (dispatch_queue_t)methodQueue
@@ -59,18 +70,20 @@ RCT_EXPORT_MODULE()
     return YES;
 }
 
-RCT_EXPORT_METHOD(registerApp:(NSString *)appid
+RCT_EXPORT_METHOD(registerAppWithUniversalLink:(NSString *)appid
+                  :(NSString *)universalLink
                   :(RCTResponseSenderBlock)callback)
 {
+    // start wechat sdk log before register in dev env
+    // [WXApi startLogByLevel:WXLogLevelDetail logBlock:^(NSString *log) {
+    //     NSLog(@"WeChatSDK: %@", log);
+    // }];
     self.appId = appid;
-    callback(@[[WXApi registerApp:appid] ? [NSNull null] : INVOKE_FAILED]);
-}
-
-RCT_EXPORT_METHOD(registerAppWithDescription:(NSString *)appid
-                  :(NSString *)appdesc
-                  :(RCTResponseSenderBlock)callback)
-{
-    callback(@[[WXApi registerApp:appid withDescription:appdesc] ? [NSNull null] : INVOKE_FAILED]);
+    callback(@[[WXApi registerApp:appid universalLink:universalLink] ? [NSNull null] : INVOKE_FAILED]);
+    [WXApi checkUniversalLinkReady:^(WXULCheckStep step, WXCheckULStepResult* result) {
+    // check universal link configuration pass or not
+    // NSLog(@"check result: %@, %u, %@, %@", @(step), result.success, result.errorInfo, result.suggestion);
+}];
 }
 
 RCT_EXPORT_METHOD(isWXAppInstalled:(RCTResponseSenderBlock)callback)
@@ -103,7 +116,14 @@ RCT_EXPORT_METHOD(sendRequest:(NSString *)openid
 {
     BaseReq* req = [[BaseReq alloc] init];
     req.openID = openid;
-    callback(@[[WXApi sendReq:req] ? [NSNull null] : INVOKE_FAILED]);
+    [WXApi sendReq:req completion:^(BOOL success) {
+        // 在回调中处理结果并触发 callback
+        if (success) {
+            callback(@[[NSNull null]]); // 成功时传递 NSNull
+        } else {
+            callback(@[INVOKE_FAILED]); // 失败时传递错误标识
+        }
+    }];
 }
 
 RCT_EXPORT_METHOD(sendAuthRequest:(NSString *)scope
@@ -113,15 +133,29 @@ RCT_EXPORT_METHOD(sendAuthRequest:(NSString *)scope
     SendAuthReq* req = [[SendAuthReq alloc] init];
     req.scope = scope;
     req.state = state;
-    BOOL success = [WXApi sendReq:req];
-    callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+    req.nonautomatic = NO;
+    [WXApi sendReq:req completion:^(BOOL success) {
+        // 在回调中处理结果并触发 callback
+        if (success) {
+            callback(@[[NSNull null]]); // 成功时传递 NSNull
+        } else {
+            callback(@[INVOKE_FAILED]); // 失败时传递错误标识
+        }
+    }];
 }
 
 RCT_EXPORT_METHOD(sendSuccessResponse:(RCTResponseSenderBlock)callback)
 {
     BaseResp* resp = [[BaseResp alloc] init];
     resp.errCode = WXSuccess;
-    callback(@[[WXApi sendResp:resp] ? [NSNull null] : INVOKE_FAILED]);
+    [WXApi sendResp:resp completion:^(BOOL success) {
+        // 在回调中处理结果并触发 callback
+        if (success) {
+            callback(@[[NSNull null]]); // 成功时传递 NSNull
+        } else {
+            callback(@[INVOKE_FAILED]); // 失败时传递错误标识
+        }
+    }];
 }
 
 RCT_EXPORT_METHOD(sendErrorCommonResponse:(NSString *)message
@@ -130,7 +164,14 @@ RCT_EXPORT_METHOD(sendErrorCommonResponse:(NSString *)message
     BaseResp* resp = [[BaseResp alloc] init];
     resp.errCode = WXErrCodeCommon;
     resp.errStr = message;
-    callback(@[[WXApi sendResp:resp] ? [NSNull null] : INVOKE_FAILED]);
+    [WXApi sendResp:resp completion:^(BOOL success) {
+        // 在回调中处理结果并触发 callback
+        if (success) {
+            callback(@[[NSNull null]]); // 成功时传递 NSNull
+        } else {
+            callback(@[INVOKE_FAILED]); // 失败时传递错误标识
+        }
+    }];
 }
 
 RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
@@ -139,7 +180,14 @@ RCT_EXPORT_METHOD(sendErrorUserCancelResponse:(NSString *)message
     BaseResp* resp = [[BaseResp alloc] init];
     resp.errCode = WXErrCodeUserCancel;
     resp.errStr = message;
-    callback(@[[WXApi sendResp:resp] ? [NSNull null] : INVOKE_FAILED]);
+    [WXApi sendResp:resp completion:^(BOOL success) {
+        // 在回调中处理结果并触发 callback
+        if (success) {
+            callback(@[[NSNull null]]); // 成功时传递 NSNull
+        } else {
+            callback(@[INVOKE_FAILED]); // 失败时传递错误标识
+        }
+    }];
 }
 
 RCT_EXPORT_METHOD(shareToTimeline:(NSDictionary *)data
@@ -170,8 +218,14 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
     req.timeStamp           = [data[@"timeStamp"] unsignedIntValue];
     req.package             = data[@"package"];
     req.sign                = data[@"sign"];
-    BOOL success = [WXApi sendReq:req];
-    callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+    [WXApi sendReq:req completion:^(BOOL success) {
+        // 在回调中处理结果并触发 callback
+        if (success) {
+            callback(@[[NSNull null]]); // 成功时传递 NSNull
+        } else {
+            callback(@[INVOKE_FAILED]); // 失败时传递错误标识
+        }
+    }];
 }
 
 - (void)shareToWeixinWithData:(NSDictionary *)aData
@@ -317,8 +371,14 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
     req.scene = aScene;
     req.text = text;
 
-    BOOL success = [WXApi sendReq:req];
-    callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+    [WXApi sendReq:req completion:^(BOOL success) {
+        // 在回调中处理结果并触发 callback
+        if (success) {
+            callback(@[[NSNull null]]); // 成功时传递 NSNull
+        } else {
+            callback(@[INVOKE_FAILED]); // 失败时传递错误标识
+        }
+    }];
 }
 
 - (void)shareToWeixinWithMediaMessage:(int)aScene
@@ -345,8 +405,14 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
     req.scene = aScene;
     req.message = message;
 
-    BOOL success = [WXApi sendReq:req];
-    callback(@[success ? [NSNull null] : INVOKE_FAILED]);
+    [WXApi sendReq:req completion:^(BOOL success) {
+        // 在回调中处理结果并触发 callback
+        if (success) {
+            callback(@[[NSNull null]]); // 成功时传递 NSNull
+        } else {
+            callback(@[INVOKE_FAILED]); // 失败时传递错误标识
+        }
+    }];
 }
 
 #pragma mark - wx callback
@@ -376,7 +442,6 @@ RCT_EXPORT_METHOD(pay:(NSDictionary *)data
 	    body[@"lang"] = r.lang;
 	    body[@"country"] =r.country;
 	    body[@"type"] = @"SendAuth.Resp";
-    
 	    if (resp.errCode == WXSuccess) {
 	        if (self.appId && r) {
 		    // ios第一次获取不到appid会卡死，加个判断OK		

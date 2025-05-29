@@ -4,6 +4,10 @@ declare module "react-native-wechat" {
     appId: string,
     desc: string
   ): Promise<boolean>;
+  export function registerAppWithUniversalLink(
+    appId: string,
+    universalLink: string
+  ): Promise<boolean>;
   export function isWXAppInstalled(): Promise<boolean>;
   export function isWXAppSupportApi(): Promise<boolean>;
   export function getApiVersion(): Promise<string>;
@@ -32,7 +36,6 @@ declare module "react-native-wechat" {
       | "audio"
       | "file";
     thumbImage?: string;
-    title?: string;
     description?: string;
     webpageUrl?: string;
     imageUrl?: string;
