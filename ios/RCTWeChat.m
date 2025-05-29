@@ -80,10 +80,10 @@ RCT_EXPORT_METHOD(registerAppWithUniversalLink:(NSString *)appid
     // }];
     self.appId = appid;
     callback(@[[WXApi registerApp:appid universalLink:universalLink] ? [NSNull null] : INVOKE_FAILED]);
-    [WXApi checkUniversalLinkReady:^(WXULCheckStep step, WXCheckULStepResult* result) {
     // check universal link configuration pass or not
+    // [WXApi checkUniversalLinkReady:^(WXULCheckStep step, WXCheckULStepResult* result) {
     // NSLog(@"check result: %@, %u, %@, %@", @(step), result.success, result.errorInfo, result.suggestion);
-}];
+    // }];
 }
 
 RCT_EXPORT_METHOD(isWXAppInstalled:(RCTResponseSenderBlock)callback)
